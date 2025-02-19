@@ -23,6 +23,9 @@ public class TokenEntity {
     @JoinColumn(name = "CLIENT_ID", nullable = false)
     private ClientEntity client;
 
+    @Column(name = "SUB", nullable = false)
+    private String sub;
+
     @Column(name = "SCOPES", nullable = false)
     private String scopes;
 

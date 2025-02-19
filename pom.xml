@@ -92,6 +92,11 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/jsend-network-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>org.json</artifactId>
+            <version>chargebee-1.0</version>
+        </dependency>
     </dependencies>
 
     <build>

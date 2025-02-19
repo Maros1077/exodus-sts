@@ -6,10 +6,7 @@ import cz.exodus.sts.service.STSService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static cz.exodus.sts.controller.STSEndpoints.*;
 
@@ -34,29 +31,29 @@ public class STSController {
         }
     }
 
-/*    @PostMapping(VALIDATE_PATH)
-    public RetrieveIdentityResponse retrieveIdentity(@RequestBody RetrieveIdentityRequest request, HttpServletResponse response) throws STSException {
-        log.debug("RETRIEVE IDENTITY START");
+    @GetMapping(VALIDATE_PATH)
+    public ValidateResponse validateToken(@RequestParam String token, HttpServletResponse response) throws STSException {
+        log.debug("VERIFY TOKEN START");
         try {
-            RetrieveIdentityResponse result = STSService.retrieveIdentity(request.getApplication(), request.getIdentificationTag(), request.isRetrieveTags(), request.isRetrieveAuthPoints());
-            log.info("RETRIEVED IDENTITY for " + result.getIdid());
+            ValidateResponse result = STSService.verifyToken(token);
+            log.info("VERIFY TOKEN SUCCESS");
             return result;
         } catch (STSException e) {
-            log.info("RETRIEVE IDENTITY FAILED for " + request.getIdentificationTag().getValue());
+            log.info("VERIFY TOKEN FAILED");
             throw e;
         }
     }
 
-    @PostMapping(REVOKE_PATH)
-    public UpdateIdentityResponse updateIdentity(@RequestBody UpdateIdentityRequest request, HttpServletResponse response) throws STSException {
-        log.debug("UPDATE IDENTITY START");
+    @GetMapping(REVOKE_PATH)
+    public Void revokeToken(@RequestParam String token, HttpServletResponse response) throws STSException {
+        log.debug("REVOKE TOKEN START");
         try {
-            UpdateIdentityResponse result = STSService.updateIdentity(request.getApplication(), request.getIdentificationTag(), request.getTags(), request.getAuthPoints());
-            log.info("UPDATED IDENTITY for " + request.getIdentificationTag().getValue());
+            Void result = STSService.revokeToken(token);
+            log.info("REVOKE TOKEN SUCCESS");
             return result;
         } catch (STSException e) {
-            log.info("UPDATE IDENTITY FAILED for " + request.getIdentificationTag().getValue());
+            log.info("REVOKE TOKEN FAILED");
             throw e;
         }
-    }*/
+    }
 }

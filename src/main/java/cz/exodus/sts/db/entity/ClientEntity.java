@@ -19,4 +19,10 @@ public class ClientEntity {
 
     @Column(name = "NAME", nullable = false)
     String name;
+
+    @Column(name = "PRIVATE_KEY", nullable = false)
+    private String privateKey;
+
+    @Column(name = "PUBLIC_KEY", nullable = false)
+    private String publicKey;
 }

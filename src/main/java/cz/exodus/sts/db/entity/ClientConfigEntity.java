@@ -29,10 +29,4 @@ public class ClientConfigEntity {
 
     @Column(name = "TYPE", nullable = false)
     private String type;
-
-    @Column(name = "PRIVATE_KEY", nullable = false)
-    private String privateKey;
-
-    @Column(name = "PUBLIC_KEY", nullable = false)
-    private String publicKey;
 }
