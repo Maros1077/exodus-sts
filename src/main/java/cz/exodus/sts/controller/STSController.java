@@ -35,7 +35,7 @@ public class STSController {
     public ValidateResponse validateToken(@RequestParam String token, HttpServletResponse response) throws STSException {
         log.debug("VERIFY TOKEN START");
         try {
-            ValidateResponse result = STSService.verifyToken(token);
+            ValidateResponse result = STSService.validateToken(token);
             log.info("VERIFY TOKEN SUCCESS");
             return result;
         } catch (STSException e) {

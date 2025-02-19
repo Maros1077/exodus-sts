@@ -1,6 +1,7 @@
 package cz.exodus.sts.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,6 @@ public class ValidateResponse {
     long expiresIn;
 
     @JsonProperty(required = true)
-    private String metadata;
+    private JsonNode metadata;
 
 }

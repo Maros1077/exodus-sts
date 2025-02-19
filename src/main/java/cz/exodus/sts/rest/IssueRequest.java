@@ -23,7 +23,7 @@ public class IssueRequest {
     @JsonProperty(required = true)
     String sub;
 
-    @JsonProperty(required = true)
+    @JsonProperty()
     JsonNode metadata;
 
 }

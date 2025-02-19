@@ -1,6 +1,8 @@
 package cz.exodus.sts.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.exodus.sts.db.entity.ClientConfigEntity;
 import cz.exodus.sts.db.entity.ClientEntity;
 import cz.exodus.sts.db.entity.TokenEntity;
@@ -61,11 +63,15 @@ public class STSService {
                 .expiration(expirationDate)
                 .signWith(privateKey, SignatureAlgorithm.ES256)
                 .compact();
-        tokenRepository.save(new TokenEntity(null, clientEntity, sub, scope, expirationDate, type, jti, metadata.toString()));
+        String stringMetadata = null;
+        if (metadata != null) {
+            stringMetadata = metadata.toString();
+        }
+        tokenRepository.save(new TokenEntity(null, clientEntity, sub, scope, expirationDate, type, jti, stringMetadata));
         return new IssueResponse(token, type, clientConfigEntity.getExpiration());
     }
 
-    public ValidateResponse verifyToken(String token) throws STSException {
+    public ValidateResponse validateToken(String token) throws STSException {
         TokenEntity tokenEntity = getToken(extractJti(token));
         try {
             Jwt<JwsHeader, Claims> jwt = Jwts.parser()
@@ -80,7 +86,15 @@ public class STSService {
             tokenRepository.delete(tokenEntity);
             throw new TokenDoesNotExistsException();
         }
-        return new ValidateResponse(tokenEntity.getClient().getName(), tokenEntity.getType(), tokenEntity.getSub(), tokenEntity.getScopes(), tokenEntity.getExpiration(), DateUtils.getSecondsBetweenDates(tokenEntity.getExpiration()), tokenEntity.getMetadata());
+        JsonNode metadata = null;
+        if (tokenEntity.getMetadata() != null) {
+            try {
+                metadata = new ObjectMapper().readTree(tokenEntity.getMetadata());
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return new ValidateResponse(tokenEntity.getClient().getName(), tokenEntity.getType(), tokenEntity.getSub(), tokenEntity.getScopes(), tokenEntity.getExpiration(), DateUtils.getSecondsBetweenDates(tokenEntity.getExpiration()), metadata);
 
     }
 
