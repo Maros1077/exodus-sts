@@ -1,0 +1,1347 @@
+{
+	"info": {
+		"_postman_id": "bf06aa82-51ff-48d4-97b1-f385ff4a72eb",
+		"name": "Exodus STS test cases",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25286484"
+	},
+	"item": [
+		{
+			"name": "STS /issue",
+			"item": [
+				{
+					"name": "OK flow - 200",
+					"item": [
+						{
+							"name": "STS issue",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+											"    pm.expect(jsonData.data.idid).to.not.be.null;\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"clientId\": \"exodus_app\",\r\n  \"scope\": \"openid\",\r\n  \"grantType\": \"password\",\r\n  \"sub\": \"testUser\",\r\n  \"metadata\": {\r\n    \"user_id\": \"12345\",\r\n    \"roles\": [\"admin\", \"editor\"],\r\n    \"permissions\": [\"read\", \"write\", \"delete\"]\r\n  }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/issue",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"issue"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "client does not exists - 1001 - fail",
+					"item": [
+						{
+							"name": "STS issue",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"fail\");\r",
+											"    pm.expect(jsonData.data.code).to.eql(1001);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"clientId\": \"NOT_EXIST\",\r\n  \"scope\": \"openid\",\r\n  \"grantType\": \"password\",\r\n  \"sub\": \"testUser\",\r\n  \"metadata\": {\r\n    \"user_id\": \"12345\",\r\n    \"roles\": [\"admin\", \"editor\"],\r\n    \"permissions\": [\"read\", \"write\", \"delete\"]\r\n  }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/issue",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"issue"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "client scope does not exists - 1003 - fail",
+					"item": [
+						{
+							"name": "STS issue",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"fail\");\r",
+											"    pm.expect(jsonData.data.code).to.eql(1003);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"clientId\": \"exodus_app\",\r\n  \"scope\": \"not_exist\",\r\n  \"grantType\": \"password\",\r\n  \"sub\": \"testUser\",\r\n  \"metadata\": {\r\n    \"user_id\": \"12345\",\r\n    \"roles\": [\"admin\", \"editor\"],\r\n    \"permissions\": [\"read\", \"write\", \"delete\"]\r\n  }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/issue",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"issue"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "STS /validate",
+			"item": [
+				{
+					"name": "OK flow - 200",
+					"item": [
+						{
+							"name": "STS issue",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+											"    pm.expect(jsonData.data.token).to.not.be.null;\r",
+											"    pm.environment.set(\"token\", jsonData.data.token);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"clientId\": \"exodus_app\",\r\n  \"scope\": \"openid\",\r\n  \"grantType\": \"password\",\r\n  \"sub\": \"testUser\",\r\n  \"metadata\": {\r\n    \"user_id\": \"12345\",\r\n    \"roles\": [\"admin\", \"editor\"],\r\n    \"permissions\": [\"read\", \"write\", \"delete\"]\r\n  }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/issue",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"issue"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "STS validate",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+											"    pm.expect(jsonData.data.clientId).to.eql(\"exodus_app\");\r",
+											"    pm.expect(jsonData.data.type).to.eql(\"bearer\");\r",
+											"    pm.expect(jsonData.data.sub).to.eql(\"testUser\");\r",
+											"    pm.expect(jsonData.data.scopes).to.eql(\"openid\");\r",
+											"    pm.expect(jsonData.data.metadata.user_id).to.eql(\"12345\")\r",
+											"    pm.expect(jsonData.data.metadata.roles).not.to.be.null\r",
+											"    pm.expect(jsonData.data.metadata.permissions).not.to.be.null\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/validate?token={{token}}",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"validate"
+									],
+									"query": [
+										{
+											"key": "token",
+											"value": "{{token}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "STS issue no metadata",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+											"    pm.expect(jsonData.data.token).to.not.be.null;\r",
+											"    pm.environment.set(\"token\", jsonData.data.token);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"clientId\": \"exodus_app\",\r\n  \"scope\": \"openid\",\r\n  \"grantType\": \"password\",\r\n  \"sub\": \"testUser\",\r\n  \"metadata\": {\r\n    \"user_id\": \"12345\",\r\n    \"roles\": [\"admin\", \"editor\"],\r\n    \"permissions\": [\"read\", \"write\", \"delete\"]\r\n  }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/issue",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"issue"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "STS validate no metadata",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+											"    pm.expect(jsonData.data.clientId).to.eql(\"exodus_app\");\r",
+											"    pm.expect(jsonData.data.type).to.eql(\"bearer\");\r",
+											"    pm.expect(jsonData.data.sub).to.eql(\"testUser\");\r",
+											"    pm.expect(jsonData.data.scopes).to.eql(\"openid\");\r",
+											"    pm.expect(jsonData.data.metadata.user_id).to.eql(\"12345\")\r",
+											"    pm.expect(jsonData.data.metadata.roles).not.to.be.null\r",
+											"    pm.expect(jsonData.data.metadata.permissions).not.to.be.null\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/validate?token={{token}}",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"validate"
+									],
+									"query": [
+										{
+											"key": "token",
+											"value": "{{token}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "token does not exists - 1002 - fail",
+					"item": [
+						{
+							"name": "STS validate",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"fail\");\r",
+											"    pm.expect(jsonData.data.code).to.eql(1002);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/validate?token=eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vTWFyb3MxMDc3L2V4b2R1cy1wcm9qZWN0Iiwic3ViIjoidGVzdFVzZXIiLCJzY29wZXMiOiJvcGVuaWQiLCJ0eXBlIjoiYmVhcmVyIiwianRpIjoiY2Y5Y2ZiODktYzRiNC00Y2FhLWEzOGYtMzVlOTNjMTNmMDZlIiwiaWF0IjoxNzM5OTc3OTU4LCJleHAiOjE3Mzk5ODE1NTh9.IlYg9h0QVH0Y0zotvhRFJ-RSpm_3g7jgscZizGYzRunHbOtJriCa7kzochLmxnFH5kR6fBQ0AFyeevTKvFdYjg",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"validate"
+									],
+									"query": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vTWFyb3MxMDc3L2V4b2R1cy1wcm9qZWN0Iiwic3ViIjoidGVzdFVzZXIiLCJzY29wZXMiOiJvcGVuaWQiLCJ0eXBlIjoiYmVhcmVyIiwianRpIjoiY2Y5Y2ZiODktYzRiNC00Y2FhLWEzOGYtMzVlOTNjMTNmMDZlIiwiaWF0IjoxNzM5OTc3OTU4LCJleHAiOjE3Mzk5ODE1NTh9.IlYg9h0QVH0Y0zotvhRFJ-RSpm_3g7jgscZizGYzRunHbOtJriCa7kzochLmxnFH5kR6fBQ0AFyeevTKvFdYjg"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "incorrect token - 1005 - fail",
+					"item": [
+						{
+							"name": "STS validate",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"fail\");\r",
+											"    pm.expect(jsonData.data.code).to.eql(1005);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/validate?token=eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vTWFyb3MxMDc3L2V4b2R1cy1wcm9qZWN0Iiwic3ViIjo",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"validate"
+									],
+									"query": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vTWFyb3MxMDc3L2V4b2R1cy1wcm9qZWN0Iiwic3ViIjo"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "STS /revoke",
+			"item": [
+				{
+					"name": "OK flow - 200",
+					"item": [
+						{
+							"name": "STS issue",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+											"    pm.expect(jsonData.data.token).to.not.be.null;\r",
+											"    pm.environment.set(\"token\", jsonData.data.token);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"clientId\": \"exodus_app\",\r\n  \"scope\": \"openid\",\r\n  \"grantType\": \"password\",\r\n  \"sub\": \"testUser\",\r\n  \"metadata\": {\r\n    \"user_id\": \"12345\",\r\n    \"roles\": [\"admin\", \"editor\"],\r\n    \"permissions\": [\"read\", \"write\", \"delete\"]\r\n  }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/issue",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"issue"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "STS validate",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+											"    pm.expect(jsonData.data.clientId).to.eql(\"exodus_app\");\r",
+											"    pm.expect(jsonData.data.type).to.eql(\"bearer\");\r",
+											"    pm.expect(jsonData.data.sub).to.eql(\"testUser\");\r",
+											"    pm.expect(jsonData.data.scopes).to.eql(\"openid\");\r",
+											"    pm.expect(jsonData.data.metadata.user_id).to.eql(\"12345\")\r",
+											"    pm.expect(jsonData.data.metadata.roles).not.to.be.null\r",
+											"    pm.expect(jsonData.data.metadata.permissions).not.to.be.null\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/validate?token={{token}}",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"validate"
+									],
+									"query": [
+										{
+											"key": "token",
+											"value": "{{token}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "STS revoke",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/revoke?token={{token}}",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"revoke"
+									],
+									"query": [
+										{
+											"key": "token",
+											"value": "{{token}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "STS validate fail",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"fail\");\r",
+											"    pm.expect(jsonData.data.code).to.eql(1002);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/validate?token={{token}}",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"validate"
+									],
+									"query": [
+										{
+											"key": "token",
+											"value": "{{token}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "token does not exists - 1002 - fail",
+					"item": [
+						{
+							"name": "STS revoke",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"fail\");\r",
+											"    pm.expect(jsonData.data.code).to.eql(1002);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/revoke?token=eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vTWFyb3MxMDc3L2V4b2R1cy1wcm9qZWN0Iiwic3ViIjoidGVzdFVzZXIiLCJzY29wZXMiOiJvcGVuaWQiLCJ0eXBlIjoiYmVhcmVyIiwianRpIjoiYmUyZTIxNWItNDg0My00MWFkLWFmNTUtMTAxYTU4YTFlYzQ3IiwiaWF0IjoxNzM5OTc4MzE0LCJleHAiOjE3Mzk5ODE5MTR9.fuFWE5nIs6MwO3zdsIxz_DxIEvUOnBkTuhNS4QhUWgsW4h7-yPdZ_s0ostI2Jf-3Nww-DX3l_py1405tk2gIBA",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"revoke"
+									],
+									"query": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vTWFyb3MxMDc3L2V4b2R1cy1wcm9qZWN0Iiwic3ViIjoidGVzdFVzZXIiLCJzY29wZXMiOiJvcGVuaWQiLCJ0eXBlIjoiYmVhcmVyIiwianRpIjoiYmUyZTIxNWItNDg0My00MWFkLWFmNTUtMTAxYTU4YTFlYzQ3IiwiaWF0IjoxNzM5OTc4MzE0LCJleHAiOjE3Mzk5ODE5MTR9.fuFWE5nIs6MwO3zdsIxz_DxIEvUOnBkTuhNS4QhUWgsW4h7-yPdZ_s0ostI2Jf-3Nww-DX3l_py1405tk2gIBA"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "incorrect token - 1005 - fail",
+					"item": [
+						{
+							"name": "STS revoke",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.clear();\r",
+											"pm.environment.unset(\"email\");\r",
+											"pm.environment.set(\"application\", \"exodus\");\r",
+											"\r",
+											"function generateEmail() {\r",
+											"    let name = \"test\"\r",
+											"    let domain = \"@email.com\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return name + number + domain;\r",
+											"};\r",
+											"\r",
+											"function generatePwd() {\r",
+											"    let start = \"myStrong\"\r",
+											"    let end = \"passwords\"\r",
+											"    let number = Math.round(Math.random() * (10000 - 1) + 1);\r",
+											"    return start + number + end;\r",
+											"};\r",
+											"\r",
+											"pm.environment.set(\"pwd\", generatePwd());\r",
+											"\r",
+											"pm.environment.set(\"email\",generateEmail());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Data in response\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonData.status).to.eql(\"fail\");\r",
+											"    pm.expect(jsonData.data.code).to.eql(1005);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{Host}}{{Port}}/sts/v1/int/revoke?token=eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vTWFyb3MxMDc3L2V4b2R1cy1wcm9qZWN0Iiwic3ViIjo",
+									"host": [
+										"{{Host}}{{Port}}"
+									],
+									"path": [
+										"sts",
+										"v1",
+										"int",
+										"revoke"
+									],
+									"query": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vTWFyb3MxMDc3L2V4b2R1cy1wcm9qZWN0Iiwic3ViIjo"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
